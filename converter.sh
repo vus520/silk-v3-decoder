@@ -22,10 +22,10 @@ cur_dir=$(cd `dirname $0`; pwd)
 
 $cur_dir/silk/decoder "$1" "$1.pcm" > /dev/null 2>&1
 if [ ! -f "$1.pcm" ]; then
-	ffmpeg -y -i "$1" "${1%.*}.$2" > /dev/null 2>&1 &
+	ffmpeg -y -i "$1" "$1.$2" > /dev/null 2>&1 &
 	ffmpeg_pid=$!
 	while kill -0 "$ffmpeg_pid"; do sleep 1; done > /dev/null 2>&1
-	[ -f "${1%.*}.$2" ]&&echo -e "${GREEN}[OK]${RESET} Convert $1 to ${1%.*}.$2 success, ${YELLOW}but not a silk v3 encoded file.${RESET}"&&exit
+	[ -f "$1.$2" ]&&echo -e "${GREEN}[OK]${RESET} Convert $1 to $1.$2 success, ${YELLOW}but not a silk v3 encoded file.${RESET}"&&exit
 	echo -e "${YELLOW}[Warning]${RESET} Convert $1 false, maybe not a silk v3 encoded file."&&exit
 fi
 ffmpeg -y -f s16le -ar 24000 -ac 1 -i "$1.pcm" "$1.$2" > /dev/null 2>&1
@@ -33,5 +33,5 @@ ffmpeg_pid=$!
 while kill -0 "$ffmpeg_pid"; do sleep 1; done > /dev/null 2>&1
 rm "$1.pcm"
 [ ! -f "$1.$2" ]&&echo -e "${YELLOW}[Warning]${RESET} Convert $1 false, maybe ffmpeg no format handler for $2."&&exit
-echo -e "${GREEN}[OK]${RESET} Convert $1 To ${1%.*}.$2 Finish and Sucess."
+echo -e "${GREEN}[OK]${RESET} Convert $1 To $1.$2 Finish and Sucess."
 exit
